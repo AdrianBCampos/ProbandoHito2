@@ -25,14 +25,25 @@ public class DiscoController {
         return discoService.buscarTodosLosDiscos();
     }
 
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<Object> crearDisco(@RequestBody DiscoDTO discoDTO) {
         try {
-            Disco discoGuardado = discoService.crearDisco(discoDTO);
+            Disco disco = convertirDtoADisco(discoDTO);  // Convertir DiscoDTO a Disco
+            Disco discoGuardado = discoService.crearDisco(disco, discoDTO.getCancionesIds(), discoDTO.getArtistasIds());
             return ResponseEntity.ok(discoGuardado);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    // Método para convertir DiscoDTO a Disco
+    private Disco convertirDtoADisco(DiscoDTO discoDTO) {
+        Disco disco = new Disco();
+        disco.setNombre(discoDTO.getNombre());
+        disco.setGenero(Genero.valueOf(discoDTO.getGenero()));
+        disco.setFechaLanzamiento(discoDTO.getFechaLanzamiento());
+
+        return disco;
     }
 
     @GetMapping("/{id}")

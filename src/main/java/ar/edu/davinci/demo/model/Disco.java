@@ -1,6 +1,5 @@
 package ar.edu.davinci.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -26,9 +25,9 @@ public class Disco {
     @ManyToMany(mappedBy = "discos")
     private List<Artista> artistas;*/
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "disco", cascade = CascadeType.ALL)
-    private List<Cancion> canciones;
+    private List<CancionDisco> cancionesDisco;
 
     @ManyToMany
     @JoinTable(
@@ -45,11 +44,11 @@ public class Disco {
 
     }
 
-    public Disco(String nombre, Genero genero, Date fechaLanzamiento, List<Cancion> canciones, List<Artista> artistas) {
+    public Disco(String nombre, Genero genero, Date fechaLanzamiento, List<CancionDisco> cancionesDisco, List<Artista> artistas) {
         this.nombre = nombre;
         this.genero = genero;
         this.fechaLanzamiento = fechaLanzamiento;
-        this.canciones = canciones;
+        this.cancionesDisco = cancionesDisco;
         this.artistas = artistas;
     }
 
@@ -85,12 +84,12 @@ public class Disco {
         this.fechaLanzamiento = fechaLanzamiento;
     }
 
-    public List<Cancion> getCanciones() {
-        return canciones;
+    public List<CancionDisco> getCancionesDisco() {
+        return cancionesDisco;
     }
 
-    public void setCanciones(List<Cancion> canciones) {
-        this.canciones = canciones;
+    public void setCancionesDisco(List<CancionDisco> cancionesDisco) {
+        this.cancionesDisco = cancionesDisco;
     }
 
     public List<Artista> getArtistas() {

@@ -26,6 +26,8 @@ public class Cancion {
     @OneToMany(mappedBy = "cancion", cascade = CascadeType.ALL)
     private List<CancionDisco> cancionesDisco;
 
+
+
     /*@ManyToMany(mappedBy = "canciones")
     private List<Artista> artistas;
 

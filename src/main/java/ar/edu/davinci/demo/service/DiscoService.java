@@ -4,62 +4,55 @@ import ar.edu.davinci.demo.exception.ResourceNotFoundException;
 import ar.edu.davinci.demo.model.*;
 import ar.edu.davinci.demo.model.DTO.DiscoDTO;
 import ar.edu.davinci.demo.repository.ArtistaRepository;
-import ar.edu.davinci.demo.repository.CancionDiscoRepository;
 import ar.edu.davinci.demo.repository.CancionRepository;
 import ar.edu.davinci.demo.repository.DiscoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DiscoService {
 
-    @Autowired
-    private DiscoRepository discoRepository;
+    private final DiscoRepository discoRepository;
+    private final CancionRepository cancionRepository;
+    private final ArtistaRepository artistaRepository;
 
     @Autowired
-    private CancionRepository cancionRepository; // Necesario si no se utiliza CancionDisco
-
-    @Autowired
-    private ArtistaRepository artistaRepository; // Necesario si no se utiliza ArtistaDiscos
-
-    public Disco crearDisco(DiscoDTO discoDTO) {
-        try {
-            Disco disco = new Disco();
-            disco.setNombre(discoDTO.getNombre());
-            disco.setGenero(Genero.valueOf(discoDTO.getGenero().toUpperCase()));
-            disco.setFechaLanzamiento(discoDTO.getFechaLanzamiento());
-
-            // Asignar canciones
-            List<Cancion> canciones = new ArrayList<>();
-            for (Long cancionId : discoDTO.getCancionesIds()) {
-                Cancion cancion = cancionRepository.findById(cancionId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Cancion con id " + cancionId + " no encontrada."));
-                canciones.add(cancion);
-            }
-            disco.setCanciones(canciones);
-
-            // Asignar artistas
-            List<Artista> artistas = new ArrayList<>();
-            for (Long artistaId : discoDTO.getArtistasIds()) {
-                Artista artista = artistaRepository.findById(artistaId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Artista con id " + artistaId + " no encontrado."));
-                artistas.add(artista);
-            }
-            disco.setArtistas(artistas);
-
-            return discoRepository.save(disco);
-        } catch (DataAccessException e) {
-            throw new RuntimeException("Error al acceder a la base de datos", e);
-        }
+    public DiscoService(DiscoRepository discoRepository, CancionRepository cancionRepository, ArtistaRepository artistaRepository) {
+        this.discoRepository = discoRepository;
+        this.cancionRepository = cancionRepository;
+        this.artistaRepository = artistaRepository;
     }
+
+    @Transactional
+    public Disco crearDisco(Disco nuevoDisco, List<Long> cancionesIds, List<Long> artistasIds) {
+        // Asociar canciones al disco
+        List<Cancion> canciones = cancionesIds.stream()
+                .map(id -> cancionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Canción no encontrada con id: " + id)))
+                .collect(Collectors.toList());
+
+        canciones.forEach(cancion -> nuevoDisco.getCancionesDisco().add(new CancionDisco(cancion, nuevoDisco)));
+
+        // Asociar artistas al disco
+        List<Artista> artistas = artistasIds.stream()
+                .map(id -> artistaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Artista no encontrado con id: " + id)))
+                .collect(Collectors.toList());
+
+        artistas.forEach(artista -> nuevoDisco.getArtistas().add(artista));
+
+        // Guardar el disco en la base de datos
+        return discoRepository.save(nuevoDisco);
+    }
+
+
     public Optional<Disco> buscarDiscoPorId(Long id) {
         return discoRepository.findById(id);
     }
