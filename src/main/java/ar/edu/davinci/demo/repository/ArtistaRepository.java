@@ -24,7 +24,7 @@ public interface ArtistaRepository extends JpaRepository<Artista, Long> {
 
     List<Artista> findByFechaFallecimientoIsNotNull();
 
-    @Query("SELECT a FROM Artista a WHERE SIZE(a.canciones) = :size")
+    @Query("SELECT a FROM Artista a WHERE SIZE(a.cancionesIds) = :size")
     List<Artista> findByCancionesSize(@Param("size") int size);
 
     // Otras consultas según las necesidades adicionales

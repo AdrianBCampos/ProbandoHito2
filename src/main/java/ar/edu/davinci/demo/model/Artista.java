@@ -1,5 +1,6 @@
 package ar.edu.davinci.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -30,16 +31,18 @@ public class Artista {
     @Lob
     private String biografia;
 
+
     @ManyToMany
     @JoinTable(
-            name = "artista_disco",
+            name = "artistas_discos",
             joinColumns = @JoinColumn(name = "artista_id"),
             inverseJoinColumns = @JoinColumn(name = "disco_id")
     )
-    private List<Disco> discos;
+    private List<Disco> discosIds;
+
 
     @OneToMany(mappedBy = "artista", cascade = CascadeType.ALL)
-    private List<CancionArtista> cancionesArtista;
+    private List<CancionArtista> cancionesIds;
 
     /*@OneToMany(mappedBy = "artista", cascade = CascadeType.ALL)
     private List<Disco> discos;*/
@@ -47,13 +50,13 @@ public class Artista {
     /*@ManyToMany(mappedBy = "artistas")
     private List<Cancion> canciones;*/
 
-    @ManyToMany
+    /*@ManyToMany
     @JoinTable(
             name = "artista_cancion",
             joinColumns = @JoinColumn(name = "artista_id"),
             inverseJoinColumns = @JoinColumn(name = "cancion_id")
     )
-    private List<Cancion> canciones;
+    private List<Cancion> canciones;*/
 
     // Constructor, getters y setters
 
@@ -61,7 +64,7 @@ public class Artista {
 
     }
 
-    public Artista(String nombre, Genero genero, Pais paisOrigen, Instrumento instrumento, Date fechaNacimiento, Date fechaFallecimiento, String biografia, List<Disco> discos, List<CancionArtista> cancionesArtista) {
+    public Artista(String nombre, Genero genero, Pais paisOrigen, Instrumento instrumento, Date fechaNacimiento, Date fechaFallecimiento, String biografia, List<Disco> discosIds, List<CancionArtista> cancionesIds) {
         this.nombre = nombre;
         this.genero = genero;
         this.paisOrigen = paisOrigen;
@@ -69,8 +72,8 @@ public class Artista {
         this.fechaNacimiento = fechaNacimiento;
         this.fechaFallecimiento = fechaFallecimiento;
         this.biografia = biografia;
-        this.discos = discos;
-        this.cancionesArtista = cancionesArtista;
+        this.discosIds = discosIds;
+        this.cancionesIds = cancionesIds;
     }
 
     public Long getId() {
@@ -137,27 +140,19 @@ public class Artista {
         this.biografia = biografia;
     }
 
-    public List<Disco> getDiscos() {
-        return discos;
+    public List<Disco> getDiscosIds() {
+        return discosIds;
     }
 
-    public void setDiscos(List<Disco> discos) {
-        this.discos = discos;
+    public void setDiscosIds(List<Disco> discosIds) {
+        this.discosIds = discosIds;
     }
 
-    public List<CancionArtista> getCancionesArtista() {
-        return cancionesArtista;
+    public List<CancionArtista> getCancionesIds() {
+        return cancionesIds;
     }
 
-    public void setCancionesArtista(List<CancionArtista> cancionesArtista) {
-        this.cancionesArtista = cancionesArtista;
-    }
-
-    public List<Cancion> getCanciones() {
-        return canciones;
-    }
-
-    public void setCanciones(List<Cancion> canciones) {
-        this.canciones = canciones;
+    public void setCancionesIds(List<CancionArtista> cancionesIds) {
+        this.cancionesIds = cancionesIds;
     }
 }

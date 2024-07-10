@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS canciones (
                                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                          nombre VARCHAR(255) NOT NULL,
-    letra TEXT,
-    genero VARCHAR(50)
+                                         letra TEXT,
+                                         genero VARCHAR(50)
     );
 
 CREATE TABLE IF NOT EXISTS artistas (
@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS artistas (
 CREATE TABLE IF NOT EXISTS discos (
                                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                       nombre VARCHAR(255) NOT NULL,
-    genero VARCHAR(50),
-    fecha_lanzamiento DATE
+                                      genero VARCHAR(50),
+                                      fecha_lanzamiento DATE
     );
 
 CREATE TABLE IF NOT EXISTS artistas_canciones (
@@ -29,6 +29,14 @@ CREATE TABLE IF NOT EXISTS artistas_canciones (
                                                   PRIMARY KEY (artista_id, cancion_id),
     FOREIGN KEY (artista_id) REFERENCES artistas(id),
     FOREIGN KEY (cancion_id) REFERENCES canciones(id)
+    );
+
+CREATE TABLE IF NOT EXISTS artistas_discos (
+                                                  artista_id BIGINT,
+                                                  disco_id BIGINT,
+                                                  PRIMARY KEY (artista_id, disco_id),
+    FOREIGN KEY (artista_id) REFERENCES artistas(id),
+    FOREIGN KEY (disco_id) REFERENCES discos(id)
     );
 
 CREATE TABLE IF NOT EXISTS canciones_discos (

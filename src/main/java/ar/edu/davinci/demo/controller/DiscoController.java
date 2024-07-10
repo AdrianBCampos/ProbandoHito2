@@ -32,8 +32,6 @@ public class DiscoController {
             return ResponseEntity.ok(discoGuardado);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
         }
     }
 

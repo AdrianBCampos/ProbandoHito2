@@ -1,9 +1,11 @@
 package ar.edu.davinci.demo.service;
 
 import ar.edu.davinci.demo.exception.ResourceNotFoundException;
-import ar.edu.davinci.demo.model.Disco;
+import ar.edu.davinci.demo.model.*;
 import ar.edu.davinci.demo.model.DTO.DiscoDTO;
-import ar.edu.davinci.demo.model.Genero;
+import ar.edu.davinci.demo.repository.ArtistaRepository;
+import ar.edu.davinci.demo.repository.CancionDiscoRepository;
+import ar.edu.davinci.demo.repository.CancionRepository;
 import ar.edu.davinci.demo.repository.DiscoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,22 +24,42 @@ public class DiscoService {
     @Autowired
     private DiscoRepository discoRepository;
 
-    public Disco crearDisco(DiscoDTO discoDTO) throws ParseException {
+    @Autowired
+    private CancionRepository cancionRepository; // Necesario si no se utiliza CancionDisco
+
+    @Autowired
+    private ArtistaRepository artistaRepository; // Necesario si no se utiliza ArtistaDiscos
+
+    public Disco crearDisco(DiscoDTO discoDTO) {
         try {
             Disco disco = new Disco();
             disco.setNombre(discoDTO.getNombre());
             disco.setGenero(Genero.valueOf(discoDTO.getGenero().toUpperCase()));
+            disco.setFechaLanzamiento(discoDTO.getFechaLanzamiento());
 
-            String fechaLanzamientoStr = String.valueOf(discoDTO.getFechaLanzamiento());
-            if (fechaLanzamientoStr != null && !fechaLanzamientoStr.isEmpty()) {
-                disco.setFechaLanzamiento(discoDTO.getFechaLanzamiento());
+            // Asignar canciones
+            List<Cancion> canciones = new ArrayList<>();
+            for (Long cancionId : discoDTO.getCancionesIds()) {
+                Cancion cancion = cancionRepository.findById(cancionId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Cancion con id " + cancionId + " no encontrada."));
+                canciones.add(cancion);
             }
+            disco.setCanciones(canciones);
+
+            // Asignar artistas
+            List<Artista> artistas = new ArrayList<>();
+            for (Long artistaId : discoDTO.getArtistasIds()) {
+                Artista artista = artistaRepository.findById(artistaId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Artista con id " + artistaId + " no encontrado."));
+                artistas.add(artista);
+            }
+            disco.setArtistas(artistas);
+
             return discoRepository.save(disco);
         } catch (DataAccessException e) {
             throw new RuntimeException("Error al acceder a la base de datos", e);
         }
     }
-
     public Optional<Disco> buscarDiscoPorId(Long id) {
         return discoRepository.findById(id);
     }

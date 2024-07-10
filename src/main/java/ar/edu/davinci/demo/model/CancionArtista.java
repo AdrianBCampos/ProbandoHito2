@@ -1,5 +1,6 @@
 package ar.edu.davinci.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,9 +11,11 @@ public class CancionArtista {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @ManyToOne
     @JoinColumn(name = "cancion_id")
     private Cancion cancion;
+
 
     @ManyToOne
     @JoinColumn(name = "artista_id")

@@ -1,5 +1,6 @@
 package ar.edu.davinci.demo.model.DTO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,8 +9,8 @@ public class DiscoDTO {
     private String nombre;
     private String genero;
     private Date fechaLanzamiento;
-    private List<Long> cancionesIds;
-    private List<Long> artistasIds;
+    private List<Long> cancionesIds = new ArrayList<>();
+    private List<Long> artistasIds = new ArrayList<>();
 
     // Getters y setters
 

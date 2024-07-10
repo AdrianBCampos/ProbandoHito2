@@ -1,5 +1,6 @@
 package ar.edu.davinci.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -25,12 +26,13 @@ public class Disco {
     @ManyToMany(mappedBy = "discos")
     private List<Artista> artistas;*/
 
+    @JsonIgnore
     @OneToMany(mappedBy = "disco", cascade = CascadeType.ALL)
-    private List<CancionDisco> cancionesDisco;
+    private List<Cancion> canciones;
 
     @ManyToMany
     @JoinTable(
-            name = "artista_disco",
+            name = "artistas_discos",
             joinColumns = @JoinColumn(name = "disco_id"),
             inverseJoinColumns = @JoinColumn(name = "artista_id")
     )
@@ -43,11 +45,11 @@ public class Disco {
 
     }
 
-    public Disco(String nombre, Genero genero, Date fechaLanzamiento, List<CancionDisco> cancionesDisco, List<Artista> artistas) {
+    public Disco(String nombre, Genero genero, Date fechaLanzamiento, List<Cancion> canciones, List<Artista> artistas) {
         this.nombre = nombre;
         this.genero = genero;
         this.fechaLanzamiento = fechaLanzamiento;
-        this.cancionesDisco = cancionesDisco;
+        this.canciones = canciones;
         this.artistas = artistas;
     }
 
@@ -83,12 +85,12 @@ public class Disco {
         this.fechaLanzamiento = fechaLanzamiento;
     }
 
-    public List<CancionDisco> getCancionesDisco() {
-        return cancionesDisco;
+    public List<Cancion> getCanciones() {
+        return canciones;
     }
 
-    public void setCancionesDisco(List<CancionDisco> cancionesDisco) {
-        this.cancionesDisco = cancionesDisco;
+    public void setCanciones(List<Cancion> canciones) {
+        this.canciones = canciones;
     }
 
     public List<Artista> getArtistas() {

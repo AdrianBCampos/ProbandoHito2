@@ -1,5 +1,6 @@
 package ar.edu.davinci.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -17,8 +18,10 @@ public class Cancion {
     @Enumerated(EnumType.STRING)
     private Genero genero;
 
+
     @OneToMany(mappedBy = "cancion", cascade = CascadeType.ALL)
     private List<CancionArtista> cancionesArtista;
+
 
     @OneToMany(mappedBy = "cancion", cascade = CascadeType.ALL)
     private List<CancionDisco> cancionesDisco;

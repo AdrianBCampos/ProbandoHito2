@@ -44,24 +44,25 @@ public class ArtistaService {
             artista.setFechaFallecimiento(artistaDTO.getFechaFallecimiento());
             artista.setBiografia(artistaDTO.getBiografia());
 
-
-
             // Asignar discos al artista (a través de sus IDs)
             if (artistaDTO.getDiscosIds() != null) {
                 List<Disco> discos = artistaDTO.getDiscosIds().stream()
                         .map(discoRepository::findById)
                         .map(optionalDisco -> optionalDisco.orElseThrow(() -> new ResourceNotFoundException("Disco no encontrado")))
                         .collect(Collectors.toList());
-                artista.setDiscos(discos);
+                artista.setDiscosIds(discos);
             }
 
             // Asignar canciones al artista (a través de sus IDs)
             if (artistaDTO.getCancionesIds() != null) {
-                List<Cancion> canciones = artistaDTO.getCancionesIds().stream()
-                        .map(cancionRepository::findById)
-                        .map(optionalCancion -> optionalCancion.orElseThrow(() -> new ResourceNotFoundException("Cancion no encontrada")))
+                List<CancionArtista> cancionesArtista = artistaDTO.getCancionesIds().stream()
+                        .map(cancionId -> {
+                            Cancion cancion = cancionRepository.findById(cancionId)
+                                    .orElseThrow(() -> new ResourceNotFoundException("Cancion no encontrada"));
+                            return new CancionArtista(cancion, artista);
+                        })
                         .collect(Collectors.toList());
-                artista.setCanciones(canciones);
+                artista.setCancionesIds(cancionesArtista);
             }
 
             return artistaRepository.save(artista);
@@ -70,8 +71,6 @@ public class ArtistaService {
             throw new RuntimeException("Error al acceder a la base de datos", e);
         }
     }
-
-
 
 
     public Artista buscarArtistaPorId(Long id) {
